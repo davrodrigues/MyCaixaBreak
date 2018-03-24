@@ -1,0 +1,13 @@
+<application>
+  <component name="ConsoleFoldingSettings">
+    <option name="addedPositive">
+      <list>
+        <option value="D/EGL_emulation: eglMakeCurrent: 0xd1668f00: ver 2 0 (tinfo 0xe8bbc760)" />
+        <option value="I/chatty: uid=10079(com.diogorodrigues.caixabreak) identical 5 lines" />
+        <option value="I/zygote: Increasing code cache capacity to 128KB" />
+        <option value="Waiting for application to come online: com.diogorodrigues.caixabreak.test | com.diogorodrigues.caixabreak" />
+        <option value="I/zygote: After code cache collection, code=117KB, data=59KB" />
+      </list>
+    </option>
+  </component>
+</application>
