@@ -1,4 +1,4 @@
-package com.diogorodrigues.caixabreak;
+package com.diogorodrigues.caixabreak.Adapters;
 
 /**
  * Created by Diogo Rodrigues on 22/03/2018.
@@ -16,7 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.diogorodrigues.caixabreak.Entities.Album;
+import com.diogorodrigues.caixabreak.R;
 
 import java.util.List;
 
@@ -30,13 +31,13 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.MyViewHold
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, count;
-        public ImageView thumbnail, overflow;
+        public ImageView overflow;
 
         public MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.title);
-            count = (TextView) view.findViewById(R.id.count);
-            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            title = (TextView) view.findViewById(R.id.card_number);
+            count = (TextView) view.findViewById(R.id.card_balance);
+      //      thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             overflow = (ImageView) view.findViewById(R.id.overflow);
         }
     }
@@ -62,7 +63,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.MyViewHold
         holder.count.setText(album.getNumOfSongs() + " songs");
 
         // loading album cover using Glide library
-        Glide.with(mContext).load(album.getThumbnail()).into(holder.thumbnail);
+     //   Glide.with(mContext).load(album.getThumbnail()).into(holder.thumbnail);
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override

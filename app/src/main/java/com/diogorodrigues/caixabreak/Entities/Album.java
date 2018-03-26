@@ -1,4 +1,4 @@
-package com.diogorodrigues.caixabreak;
+package com.diogorodrigues.caixabreak.Entities;
 
 /**
  * Created by Diogo Rodrigues on 22/03/2018.
