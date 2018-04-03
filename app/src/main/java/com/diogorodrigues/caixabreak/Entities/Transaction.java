@@ -1,41 +1,42 @@
 package com.diogorodrigues.caixabreak.Entities;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Created by Diogo Rodrigues on 24/03/2018.
  */
 
 public class Transaction {
-    private LocalDate lData;
-    private LocalDate dataValor;
+    private Date lData;
+    private Date lDataValor;
     private String description;
-    private Double debit; //subtractions
-    private Double credit; //additions
+    private String debit; //subtractions
+    private String credit; //additions
 
     public Transaction() {
     }
 
-    public Transaction(LocalDate lData, LocalDate dataValor, String description) {
+    public Transaction(Date lData, Date dataValor, String description) {
         this.lData = lData;
-        this.dataValor = dataValor;
+        this.lDataValor = dataValor;
         this.description = description;
     }
 
-    public LocalDate getlData() {
+    public Date getlData() {
         return lData;
     }
 
-    public void setlData(LocalDate lData) {
+    public void setlData(Date lData) {
         this.lData = lData;
     }
 
-    public LocalDate getDataValor() {
-        return dataValor;
+    public Date getlDataValor() {
+        return lDataValor;
     }
 
-    public void setDataValor(LocalDate dataValor) {
-        this.dataValor = dataValor;
+    public void setlDataValor(Date lDataValor) {
+        this.lDataValor = lDataValor;
     }
 
     public String getDescription() {
@@ -46,20 +47,31 @@ public class Transaction {
         this.description = description;
     }
 
-    public Double getDebit() {
+    public String getDebit() {
         return debit;
     }
 
-    public void setDebit(Double debit) {
+    public void setDebit(String debit) {
         this.debit = debit;
     }
 
-    public Double getCredit() {
+    public String getCredit() {
         return credit;
     }
 
-    public void setCredit(Double credit) {
+    public void setCredit(String credit) {
         this.credit = credit;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "lData=" + lData +
+                ", lDataValor=" + lDataValor +
+                ", description='" + description + '\'' +
+                ", debit=" + debit +
+                ", credit=" + credit +
+                '}';
     }
 
 }

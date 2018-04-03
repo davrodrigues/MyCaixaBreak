@@ -1,44 +1,56 @@
 package com.diogorodrigues.caixabreak;
+
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Toast;
 
 import com.diogorodrigues.caixabreak.Adapters.CardAdapter;
-import com.diogorodrigues.caixabreak.Entities.Album;
 import com.diogorodrigues.caixabreak.Entities.Card;
 
 import org.jsoup.nodes.Document;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
     private CardAdapter adapter;
-    private List<Album> albumList;
     private List<Card> cardList;
     private CaixaScraper cxs;
     ProgressDialog mProgressDialog;
-    String url = "http://www.androidbegin.com";
+    public static final int TEXT_REQUEST = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-       // albumList = new ArrayList<>();
-       // adapter = new AlbumsAdapter(this, albumList);
+        //FAB
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click action
+                Intent intent = new Intent(MainActivity.this, NewCardActivity.class);
+                //startActivity(intent);
+                startActivityForResult(intent, TEXT_REQUEST);
+            }
+        });
 
         cardList = new ArrayList<>();
         adapter = new CardAdapter(this, cardList);
@@ -49,20 +61,29 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(1, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-        prepareCards();
 
-       // prepareAlbums();
-    }
-    private void prepareCards(){
+        adapter.prepareCards();
+        new Refresh().execute();
 
-            Card card = new Card();
-            cardList.add(card);
-
-
-
-        new Description().execute();
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == TEXT_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                String reply =
+                        data.getStringExtra(NewCardActivity.EXTRA_REPLY);
+
+                Card nCard = (Card) data.getSerializableExtra(NewCardActivity.SER_KEY);
+                Toast.makeText(this, "Recebido cartão: "+nCard.getNome(), Toast.LENGTH_LONG).show();
+                cardList.add(nCard);
+                //adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(cardList.indexOf(nCard));
+                new Refresh().execute();
+            }
+        }
+    }
 
     /**
      * RecyclerView item decoration - give equal margin around grid item
@@ -73,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         private int spacing;
         private boolean includeEdge;
 
-        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+        GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
             this.spanCount = spanCount;
             this.spacing = spacing;
             this.includeEdge = includeEdge;
@@ -110,10 +131,10 @@ public class MainActivity extends AppCompatActivity {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
-    // Description AsyncTask
-    private class Description extends AsyncTask<Void, Void, Void> {
-        String desc;
+    // Refresh AsyncTask
+    public class Refresh extends AsyncTask<Void, Void, Void> {
         Document dc;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -127,19 +148,27 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
+            for (Card c : cardList){
+                dc =  cxs.connect2CaixaBreak(c);
+                cxs.parseBalance(dc, c);
+                try {
+                    cxs.parseTransactions(dc, c);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
-            dc =  cxs.connect2CaixaBreak(cardList.get(0));
-            cxs.parseBalance(dc, cardList.get(0));
+            }
+            //adapter.notifyDataSetChanged();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
 
-
-            System.out.println("novo saldo: "+cardList.get(0).getBalance());
+            System.out.println("Done.");
             mProgressDialog.dismiss();
             adapter.notifyDataSetChanged();
         }
     }
+
 }

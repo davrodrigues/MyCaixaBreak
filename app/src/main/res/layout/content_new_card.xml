@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/viewBg"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.diogorodrigues.caixabreak.NewCardActivity"
+    tools:showIn="@layout/activity_new_card">
+
+
+    <EditText
+        android:id="@+id/new_card_name"
+        android:layout_width="@dimen/detail_backdrop_height"
+        android:layout_margin="@dimen/backdrop_title"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+
+        android:ems="10"
+        android:hint="@string/card_name"
+        android:inputType="textPersonName"
+        android:paddingTop="@dimen/fab_margin" />
+
+    <EditText
+        android:id="@+id/new_card_user"
+        android:layout_width="@dimen/detail_backdrop_height"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/new_card_name"
+        android:hint="@string/user_hint"
+        android:layout_margin="@dimen/backdrop_title"
+        android:inputType="textPersonName"
+        android:textSize="@dimen/backdrop_subtitle" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="@dimen/detail_backdrop_height"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/new_card_user"
+        android:hint="@string/pw_hint"
+        android:layout_margin="@dimen/backdrop_title"
+        android:inputType="numberPassword"
+        android:textSize="@dimen/backdrop_subtitle" />
+
+</RelativeLayout>

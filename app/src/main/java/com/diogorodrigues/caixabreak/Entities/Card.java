@@ -1,15 +1,18 @@
 package com.diogorodrigues.caixabreak.Entities;
 
+import java.io.Serializable;
+
 /**
  * Created by Diogo Rodrigues on 22/03/2018.
  */
 
-public class Card {
+public class Card implements Serializable {
+    private static final long serialVersionUID = 666;
     private String nome ="generico";
     private String user = "6272293";
-    private String username ="PPP"+user;
+    private String username;
     private String pwd = "14528";
-    private String balance;
+    private String balance = "0,00 €";
     private Movement movement;
 
 
@@ -47,8 +50,8 @@ public class Card {
     public String getUsername() {
         return username;
     }
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername() {
+        this.username = "PPP"+user;
     }
     public String getBalance() {
         return balance;

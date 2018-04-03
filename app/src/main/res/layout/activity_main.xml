@@ -25,4 +25,19 @@
         android:id="@+id/include"
         layout="@layout/content_main" />
 
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/colorSecondary"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_credit_card_white_48dp" />
+
 </android.support.design.widget.CoordinatorLayout>
