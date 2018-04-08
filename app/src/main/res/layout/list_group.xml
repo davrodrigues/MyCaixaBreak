@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryLight"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+<!--
+        <TextView
+            android:id="@+id/h_date_processed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/h_date_processed"
+            android:textColor="@color/viewBg"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/h_date_transaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/h_date_processed"
+            android:text="@string/h_date_transaction"
+            android:textColor="@color/viewBg"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/h_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/h_date_transaction"
+            android:text="@string/h_description"
+            android:textColor="@color/viewBg"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/h_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/h_description"
+            android:text="@string/h_value"
+            android:textColor="@color/viewBg"
+            android:textSize="17sp" />
+-->
+
+        <TextView
+            android:id="@+id/h_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/h_date_transaction"
+            android:layout_marginStart="50sp"
+            android:textColor="@color/viewBg"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -23,5 +23,10 @@
     <string name="user_hint">Nº de Acesso (7 digitos)</string>
     <string name="card_name">Nome do Cartão</string>
 
+    <!-- Transactions -->
+    <string name="h_date_processed">Data Processada</string>
+    <string name="h_date_transaction">Data Transação</string>
+    <string name="h_value">Valor</string>
+    <string name="h_description">Descrição</string>
 
 </resources>

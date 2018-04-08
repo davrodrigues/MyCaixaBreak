@@ -8,8 +8,8 @@ import java.util.List;
 
 public class Movement {
     private List<Transaction> transactions;
-    private Double totalDebit;
-    private Double totalCredit;
+    private String totalDebit;
+    private String totalCredit;
 
     public Movement() {
     }
@@ -22,19 +22,19 @@ public class Movement {
         this.transactions = transactions;
     }
 
-    public Double getTotalDebit() {
+    public String getTotalDebit() {
         return totalDebit;
     }
 
-    public void setTotalDebit(Double totalDebit) {
+    public void setTotalDebit(String totalDebit) {
         this.totalDebit = totalDebit;
     }
 
-    public Double getTotalCredit() {
+    public String getTotalCredit() {
         return totalCredit;
     }
 
-    public void setTotalCredit(Double totalCredit) {
+    public void setTotalCredit(String totalCredit) {
         this.totalCredit = totalCredit;
     }
 }

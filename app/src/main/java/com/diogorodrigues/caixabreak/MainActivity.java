@@ -13,15 +13,20 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.diogorodrigues.caixabreak.Adapters.CardAdapter;
+import com.diogorodrigues.caixabreak.Adapters.ExpandableListAdapter;
 import com.diogorodrigues.caixabreak.Entities.Card;
+import com.diogorodrigues.caixabreak.Entities.Movement;
 
 import org.jsoup.nodes.Document;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private CaixaScraper cxs;
     ProgressDialog mProgressDialog;
     public static final int TEXT_REQUEST = 1;
+
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
 
 
     @Override
@@ -54,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         cardList = new ArrayList<>();
         adapter = new CardAdapter(this, cardList);
+
         cxs = new CaixaScraper();
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
@@ -63,6 +74,18 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.prepareCards();
+
+        //expandableView Adapter  -----------------
+
+        // get the listview
+        expListView = (ExpandableListView) findViewById(R.id.exp_view);
+
+        listAdapter = new ExpandableListAdapter(this, cardList);
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+
+        //end list view --------------------------
+
         new Refresh().execute();
 
     }
@@ -80,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 cardList.add(nCard);
                 //adapter.notifyDataSetChanged();
                 adapter.notifyItemInserted(cardList.indexOf(nCard));
+                listAdapter.notifyDataSetChanged();
                 new Refresh().execute();
             }
         }
@@ -149,16 +173,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             for (Card c : cardList){
-                dc =  cxs.connect2CaixaBreak(c);
-                cxs.parseBalance(dc, c);
                 try {
+                    dc =  cxs.connect2CaixaBreak(c);
+                    cxs.parseBalance(dc, c);
                     cxs.parseTransactions(dc, c);
-                } catch (ParseException e) {
+                } catch (ParseException | IOException e) {
                     e.printStackTrace();
                 }
 
             }
-            //adapter.notifyDataSetChanged();
             return null;
         }
 
@@ -168,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Done.");
             mProgressDialog.dismiss();
             adapter.notifyDataSetChanged();
+            listAdapter.notifyDataSetChanged();
         }
     }
 

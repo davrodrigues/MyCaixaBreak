@@ -7,15 +7,26 @@
     android:background="@color/viewBg"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.diogorodrigues.caixabreak.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    >
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250sp"
         android:clipToPadding="false"
-        android:scrollbars="vertical" >
+        android:scrollbars="vertical"
+        >
 
     </android.support.v7.widget.RecyclerView>
+
+    <ExpandableListView
+        android:id="@+id/exp_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/recycler_view"
+        />
+
 </RelativeLayout>

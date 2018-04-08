@@ -1,11 +1,14 @@
 package com.diogorodrigues.caixabreak;
 
+import android.annotation.SuppressLint;
+
 import com.diogorodrigues.caixabreak.Entities.Card;
 import com.diogorodrigues.caixabreak.Entities.Movement;
 import com.diogorodrigues.caixabreak.Entities.Transaction;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -27,11 +30,11 @@ import java.util.Map;
 
 public class CaixaScraper {
     public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36";
-    public final static String  BASE_URL = "https://portalprepagos.cgd.pt/portalprepagos/";
-    public final static String  WELCOME_PAGE ="login.seam?sp_param=PrePago";
-    public final static String  LOGIN_PAGE = "auth/forms/login.fcc";
-    public final static String  MANAGEMENT_PAGE = "private/saldoMovimentos.seam";
-    public final static String  TARGET_HOME = "/portalprepagos/private/home.seam";
+    public final static String BASE_URL = "https://portalprepagos.cgd.pt/portalprepagos/";
+    public final static String WELCOME_PAGE = "login.seam?sp_param=PrePago";
+    public final static String LOGIN_PAGE = "auth/forms/login.fcc";
+    public final static String MANAGEMENT_PAGE = "private/saldoMovimentos.seam";
+    public final static String TARGET_HOME = "/portalprepagos/private/home.seam";
     private static final String contentType = "application/x-www-form-urlencoded;charset=UTF-8";
 
     public CaixaScraper() {
@@ -39,24 +42,23 @@ public class CaixaScraper {
 
 
     public void parseBalance(Document doc, Card c) {
-        Element ele = null;
-        if(doc!=null) {
+        Element ele;
+        if (doc != null) {
             ele = doc.selectFirst("#consultaMovimentosCartoesPrePagos > div:nth-child(7) > div > div > div > div > p.valor > label:nth-child(1)");
 
             if (ele != null && !ele.text().isEmpty()) {
                 String db = ele.text();
                 c.setBalance(db + "€");
             }
-        }
-        else
+        } else
             System.out.println("O parsing do saldo falhou!");
     }
 
     public void parseTransactions(Document doc, Card c) throws ParseException {
-        Element table = null;
-
-        if(doc!=null) {
-
+        Element table;
+        Element totalsTable;
+        if (doc != null) {
+            //select and parse the transactions table
             table = doc.selectFirst("#consultaMovimentosCartoesPrePagos > div:nth-child(10) > table > tbody");
             Elements rows = table.select("tr");
 
@@ -66,12 +68,12 @@ public class CaixaScraper {
             for (int i = 1; i < rows.size(); i++) { //first row is the col names so skip it.
                 Element row = rows.get(i);
                 Elements cols = row.select("td");
-                System.out.println("Row i="+i+"---------");
+               // System.out.println("Row i=" + i + "---------");
 
                 Transaction t = new Transaction();
 
-                if (cols!=null && cols.size()>0){
-                    SimpleDateFormat dtf = new SimpleDateFormat("dd-mm-yyyy");
+                if (cols != null && cols.size() > 0 && !cols.text().equals("")) {
+                    SimpleDateFormat dtf = new SimpleDateFormat("dd-MM-yyyy");
 
                     Date dt1 = dtf.parse(cols.get(0).text());
                     Date dt2 = dtf.parse(cols.get(1).text());
@@ -80,41 +82,35 @@ public class CaixaScraper {
                     t.setlDataValor(dt2);
 
                     t.setDescription(cols.get(2).text());
-                    if(cols.get(3)!=null)
+                    if (cols.get(3) != null)
                         t.setCredit(cols.get(3).text());
                     else
                         t.setCredit("");
 
-                    if(cols.get(4)!=null)
+                    if (cols.get(4) != null)
                         t.setDebit(cols.get(4).text());
                     else
                         t.setDebit("");
 
                     trs.add(t);
                 }
-                //optar por outra abordagem
-                /*for(int f=0; f< cols.size(); f++){
-                    Element col = cols.get(f);
-                    if(col!=null){
-                        System.out.print("Col: "+col.text()+" \t ");
-
-                    }
-                }
-                */
-
             }
             mv.setTransactions(trs);
-            /** TODO
-            mv.setTotalCredit();
-            mv.setTotalDebit();
-            */
+
+            totalsTable = doc.selectFirst("#consultaMovimentosCartoesPrePagos > div:nth-child(10) > div.mgtop > table > tbody");
+            Element totalsRow = totalsTable.selectFirst("tr");
+            Elements totalsCols = totalsRow.select("td");
+
+            //total credit & total debit
+            mv.setTotalCredit(totalsCols.get(3).text());
+            mv.setTotalDebit(totalsCols.get(4).text());
+
             c.setMovement(mv);
-        }
-        else
+        } else
             System.out.println("O parsing da transação falhou!");
     }
 
-    public Document connect2CaixaBreak(Card c) {
+    public Document connect2CaixaBreak(Card c) throws IOException {
         String loginFormSubmit = "Entrar";
 
 
@@ -123,16 +119,17 @@ public class CaixaScraper {
         Map<String, String> cookies;
 
         formData1.put("USERNAME", c.getUser());
-        formData1.put("login_btn_1PPP","OK");
+        formData1.put("login_btn_1PPP", "OK");
 
         Connection.Response loginForm = null;
         try {
-            loginForm = Jsoup.connect(BASE_URL+WELCOME_PAGE).
+            loginForm = Jsoup.connect(BASE_URL + WELCOME_PAGE).
                     method(Connection.Method.GET).
-                    header("Content-Type",contentType).
+                    header("Content-Type", contentType).
                     userAgent(USER_AGENT).
                     data(formData1).
                     ignoreHttpErrors(true).
+                    timeout(0).
                     execute();
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,16 +145,18 @@ public class CaixaScraper {
         cookies = loginForm.cookies();
 
         System.out.println(loginForm.statusMessage());
+        //this closes the body?
+        loginForm = null;
 
         Connection.Response loginForm2 = null;
         try {
-            loginForm2 = Jsoup.connect(BASE_URL+LOGIN_PAGE).
-                    header("Content-Type",contentType).
+            loginForm2 = Jsoup.connect(BASE_URL + LOGIN_PAGE).
+                    header("Content-Type", contentType).
                     cookies(cookies).
                     method(Connection.Method.POST).
                     userAgent(USER_AGENT).
-                    timeout(0).
                     data(formData2).
+                    timeout(0).
                     ignoreHttpErrors(true).
                     execute();
         } catch (IOException e) {
@@ -167,11 +166,13 @@ public class CaixaScraper {
         cookies.putAll(loginForm2.cookies());// save the cookies, this will be passed on to next request
 
         System.out.println(loginForm2.statusMessage());
+        //this closes the body?
+        loginForm2 = null;
 
         Connection.Response loginForm3 = null;
         try {
-            loginForm3 = Jsoup.connect(BASE_URL+MANAGEMENT_PAGE).
-                    header("Content-Type",contentType).
+            loginForm3 = Jsoup.connect(BASE_URL + MANAGEMENT_PAGE).
+                    header("Content-Type", contentType).
                     cookies(cookies).
                     userAgent(USER_AGENT).
                     method(Connection.Method.GET).
@@ -183,6 +184,7 @@ public class CaixaScraper {
         }
 
         System.out.println(loginForm3.statusMessage());
+
         Document loginDoc = null; // this is the document that contains response html
         try {
             String body = loginForm3.body();

@@ -30,9 +30,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
 
 
 
+    public CardAdapter(Context mContext, List<Card> cardList) {
+        super();
+        this.mContext = mContext;
+        this.cardList = cardList;
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView cardNameView, cardNumberView, cardBalanceView;
         public ImageView overflow;
+
         public CardView cardView;
 
         public MyViewHolder(View view) {
@@ -45,12 +52,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
             overflow = (ImageView) view.findViewById(R.id.overflow);
         }
 
-    }
-
-    public CardAdapter(Context mContext, List<Card> cardList) {
-        super();
-        this.mContext = mContext;
-        this.cardList = cardList;
     }
 
 
@@ -66,16 +67,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(final CardAdapter.MyViewHolder holder, int position) {
 
-
         Card card = cardList.get(position);
         holder.cardNameView.setText(card.getNome());
         holder.cardNumberView.setText(card.getUser());
         holder.cardBalanceView.setText(card.getBalance());
 
+        setCurrentPos(position);
+
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCurrentPos(holder.getAdapterPosition());
+                //setCurrentPos(holder.getAdapterPosition());
                 showPopupMenu(holder.overflow);
             }
         });
@@ -121,14 +123,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
                 case R.id.action_delete_card:
                     Toast.makeText(mContext, "delete position: " + getCurrentPos(), Toast.LENGTH_SHORT).show();
                     cardList.remove(getCurrentPos());
+
                     notifyDataSetChanged();
                     return true;
+
                 case R.id.action_add_widget:
                     Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
                     return true;
                 default:
+                    return false;
             }
-            return false;
+            //return false;
         }
     }
 
