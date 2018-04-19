@@ -7,11 +7,15 @@ import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -19,14 +23,15 @@ import android.widget.Toast;
 import com.diogorodrigues.caixabreak.Adapters.CardAdapter;
 import com.diogorodrigues.caixabreak.Adapters.ExpandableListAdapter;
 import com.diogorodrigues.caixabreak.Entities.Card;
-import com.diogorodrigues.caixabreak.Entities.Movement;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,46 +44,60 @@ public class MainActivity extends AppCompatActivity {
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        cxs = new CaixaScraper();
+        cardList = new ArrayList<>();
 
-        //FAB
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // myToolbar is defined in the layout file
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        // SwipeRefreshLayout
+        mSwipeRefreshLayout = findViewById(R.id.swiperefresh);
+        //PULL TO REFRESH
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View view) {
-                // Click action
-                Intent intent = new Intent(MainActivity.this, NewCardActivity.class);
-                //startActivity(intent);
-                startActivityForResult(intent, TEXT_REQUEST);
+            public void onRefresh() {
+                // Refresh items
+                refreshItems();
+                // Stop refresh animation
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
-        cardList = new ArrayList<>();
+        //Retrieve data from SplashActivity
+        Intent intent = getIntent();
+        String gsonCards = intent.getStringExtra("gsonCards");
+        Type type = new TypeToken<List<Card>>() {}.getType();
+
+        //parse response from splashactivity
+        Gson gson = new Gson();
+        cardList = gson.fromJson(gsonCards, type);
         adapter = new CardAdapter(this, cardList);
 
-        cxs = new CaixaScraper();
+        LinearLayoutManager horizontalLayoutManager =
+                new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(horizontalLayoutManager);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(1, dpToPx(10), true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        adapter.prepareCards();
+        //DEPRECATED FILLS IN CARDLIST
+        //adapter.prepareCards();
 
         //expandableView Adapter  -----------------
 
         // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.exp_view);
+        expListView = findViewById(R.id.exp_view);
 
         listAdapter = new ExpandableListAdapter(this, cardList);
         // setting list adapter
@@ -87,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         //end list view --------------------------
 
         new Refresh().execute();
-
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -95,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == TEXT_REQUEST) {
             if (resultCode == RESULT_OK) {
-                String reply =
-                        data.getStringExtra(NewCardActivity.EXTRA_REPLY);
 
                 Card nCard = (Card) data.getSerializableExtra(NewCardActivity.SER_KEY);
                 Toast.makeText(this, "Recebido cartão: "+nCard.getNome(), Toast.LENGTH_LONG).show();
@@ -163,11 +179,6 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            mProgressDialog = new ProgressDialog(MainActivity.this);
-            mProgressDialog.setTitle("CaixaBreak");
-            mProgressDialog.setMessage("A carregar Informação...");
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.show();
         }
 
         @Override
@@ -188,11 +199,38 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
 
-            System.out.println("Done.");
-            mProgressDialog.dismiss();
             adapter.notifyDataSetChanged();
             listAdapter.notifyDataSetChanged();
+
+            // Update the adapter and notify data set changed
+            System.out.println("Refresh executado com sucesso! ");
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_mainactivity_add_card, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.add_card:
+                // Click action
+                Intent intent = new Intent(MainActivity.this, NewCardActivity.class);
+                startActivityForResult(intent, TEXT_REQUEST);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    void refreshItems() {
+        // Load items
+        new Refresh().execute();
+        // Load complete
     }
 
 }

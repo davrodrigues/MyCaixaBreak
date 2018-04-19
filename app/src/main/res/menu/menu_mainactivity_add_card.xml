@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.diogorodrigues.caixabreak.MainActivity">
+
+    <!-- Settings, should always be in the overflow -->
+    <item
+        android:id="@+id/add_card"
+        android:icon="@drawable/icons8_plus_48_wht"
+        android:title="@string/addCard"
+        app:showAsAction="always"
+        />
+
+</menu>

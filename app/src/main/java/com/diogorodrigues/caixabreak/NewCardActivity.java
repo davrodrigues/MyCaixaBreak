@@ -16,11 +16,7 @@ public class NewCardActivity extends AppCompatActivity {
     TextView newUserNameView;
     TextView newUserNumberView;
     TextView newPasswordView;
-    public  final static String SER_KEY = "com.easyinfogeek.objectPass.ser";
-
-    // Unique tag for the intent reply.
-    public static final String EXTRA_REPLY =
-            "com.example.android.twoactivities.extra.REPLY";
+    public  final static String SER_KEY = "newCard";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +63,13 @@ public class NewCardActivity extends AppCompatActivity {
                     nCard.setPwd(password);
                     nCard.setUser(usernumber);
                     nCard.setUsername();
+                    //create movement()
+                    //create Transactions()
                     Toast.makeText(this.getApplicationContext(), "Cartão criado!", Toast.LENGTH_SHORT).show();
 
-                    //Intent mIntent = new Intent(this,MainActivity.class);
                     Intent mIntent = new Intent();
                     Bundle mBundle = new Bundle();
                     mBundle.putSerializable(SER_KEY,nCard);
-                    mIntent.putExtra(EXTRA_REPLY, "12345");
                     setResult(RESULT_OK,mIntent);
                     mIntent.putExtras(mBundle);
 
@@ -87,13 +83,15 @@ public class NewCardActivity extends AppCompatActivity {
                     Toast.makeText(this.getApplicationContext(), "Erro na validação!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 //Toast.makeText(this.getApplicationContext(), "Default selecionado!", Toast.LENGTH_SHORT).show();
-                //return super.onOptionsItemSelected(item);
-                return false;
+                return super.onOptionsItemSelected(item);
+                //return false;
 
         }
     }

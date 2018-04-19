@@ -36,20 +36,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
         this.cardList = cardList;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView cardNameView, cardNumberView, cardBalanceView;
-        public ImageView overflow;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView cardNameView, cardNumberView, cardBalanceView;
+         ImageView overflow;
 
-        public CardView cardView;
+         CardView cardView;
 
-        public MyViewHolder(View view) {
+         MyViewHolder(View view) {
             super(view);
-            cardView = (CardView) view.findViewById(R.id.card_view);
+            cardView = view.findViewById(R.id.card_view);
 
-            cardNameView = (TextView) view.findViewById(R.id.cartao_nome);
-            cardNumberView = (TextView) view.findViewById(R.id.card_number);
-            cardBalanceView = (TextView) view.findViewById(R.id.card_balance);
-            overflow = (ImageView) view.findViewById(R.id.overflow);
+            cardNameView = view.findViewById(R.id.cartao_nome);
+            cardNumberView = view.findViewById(R.id.card_number);
+            cardBalanceView = view.findViewById(R.id.card_balance);
+            overflow = view.findViewById(R.id.overflow);
         }
 
     }
@@ -88,7 +88,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
 
                 Toast.makeText(mContext,
                         "Card selected: " + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
-                Card nCard = cardList.get(holder.getAdapterPosition());
+                //Card nCard = cardList.get(holder.getAdapterPosition());
 
                 notifyDataSetChanged();
             }
@@ -115,6 +115,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
         public MyMenuItemClickListener() {
+
         }
 
         @Override
@@ -123,7 +124,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
                 case R.id.action_delete_card:
                     Toast.makeText(mContext, "delete position: " + getCurrentPos(), Toast.LENGTH_SHORT).show();
                     cardList.remove(getCurrentPos());
-
                     notifyDataSetChanged();
                     return true;
 
@@ -131,10 +131,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
                     Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
                     return true;
                 default:
-                    return false;
+
             }
-            //return false;
+            return false;
         }
+
     }
 
     @Override
@@ -151,13 +152,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.MyViewHolder> 
     }
 
     public void prepareCards() {
-        for (int i = 0; i < 1; i++) {
+        /*for (int i = 0; i < 3; i++) {
             Card card = new Card();
             card.setNome("diogo");
             card.setUser("6272293");
             card.setUsername();
             cardList.add(card);
         }
+        */
     }
 
 

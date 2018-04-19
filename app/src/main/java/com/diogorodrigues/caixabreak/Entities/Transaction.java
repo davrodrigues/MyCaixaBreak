@@ -1,5 +1,6 @@
 package com.diogorodrigues.caixabreak.Entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -7,12 +8,13 @@ import java.util.Date;
  * Created by Diogo Rodrigues on 24/03/2018.
  */
 
-public class Transaction {
-    private Date lData;
-    private Date lDataValor;
-    private String description;
-    private String debit; //subtractions
-    private String credit; //additions
+public class Transaction implements Serializable {
+    private static final long serialVersionUID = 333;
+    private Date lData = new Date();
+    private Date lDataValor = new Date();
+    private String description = "empty";
+    private String debit = ""; //subtractions
+    private String credit = ""; //additions
 
     public Transaction() {
     }

@@ -41,15 +41,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-
-        Toast.makeText(this._context, "getChildId: "+childPosition, Toast.LENGTH_SHORT).show();
+        Transaction tx = this.cardList.get(groupPosition).getMovement().getTransactions().get(childPosition);
+        if(tx!=null) {
+            Toast.makeText(this._context, "Compra: "+ tx.getDescription(), Toast.LENGTH_SHORT).show();
+        }
         return childPosition;
     }
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
-
+    public View getChildView(
+       int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
             LayoutInflater inf = LayoutInflater.from(parent.getContext());
@@ -86,7 +87,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int groupPosition) {
-        return this.cardList.get(groupPosition);
+        int size = cardList.size();
+
+        if(groupPosition>=size)
+            return cardList.get(size-1);
+        else
+        return cardList.get(groupPosition);
     }
 
     @Override

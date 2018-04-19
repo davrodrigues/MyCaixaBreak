@@ -23,4 +23,7 @@
     <dimen name="card_name">24sp</dimen>
     <dimen name="card_number">16sp</dimen>
     <dimen name="card_balance">20sp</dimen>
+
+    <!-- WIDGET -->
+    <dimen name="widget_margin">8dp</dimen>
 </resources>

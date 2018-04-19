@@ -68,7 +68,7 @@ public class CaixaScraper {
             for (int i = 1; i < rows.size(); i++) { //first row is the col names so skip it.
                 Element row = rows.get(i);
                 Elements cols = row.select("td");
-               // System.out.println("Row i=" + i + "---------");
+                // System.out.println("Row i=" + i + "---------");
 
                 Transaction t = new Transaction();
 
@@ -111,90 +111,103 @@ public class CaixaScraper {
     }
 
     public Document connect2CaixaBreak(Card c) throws IOException {
-        String loginFormSubmit = "Entrar";
+        Map<String, String> cookies = new HashMap<>();
 
+        //con 1
+        Connection.Response resp1 = connect1(c);
+        System.out.println(resp1.statusMessage());
+        cookies.putAll(resp1.cookies());
 
-        HashMap<String, String> formData1 = new HashMap<>();
-        HashMap<String, String> formData2 = new HashMap<>();
-        Map<String, String> cookies;
+        //con 2
+        Connection.Response resp2 = connect2(c, cookies);
+        System.out.println(resp2.statusMessage());
+        cookies.putAll(resp2.cookies());// save the cookies, this will be passed on to next request
 
-        formData1.put("USERNAME", c.getUser());
-        formData1.put("login_btn_1PPP", "OK");
+        //con 3
+        Connection.Response resp3 = connect3(c, cookies);
+        System.out.println(resp3.statusMessage());
 
-        Connection.Response loginForm = null;
+        Document loginDoc = null; // this is the document that contains response html
+
+        String body = resp3.body();
+
+        loginDoc = Jsoup.parse(body);
+
+        return loginDoc;
+    }
+
+    //GET
+    public Connection.Response connect1(Card c){
+        HashMap<String, String> formData = new HashMap<>();
+        formData.put("USERNAME", c.getUser());
+        formData.put("login_btn_1PPP", "OK");
+
+        Connection.Response resp = null;
         try {
-            loginForm = Jsoup.connect(BASE_URL + WELCOME_PAGE).
+            resp = Jsoup.connect(BASE_URL + WELCOME_PAGE).
                     method(Connection.Method.GET).
                     header("Content-Type", contentType).
                     userAgent(USER_AGENT).
-                    data(formData1).
+                    data(formData).
                     ignoreHttpErrors(true).
-                    timeout(0).
+                    timeout(30000).
                     execute();
+            return resp;
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Exception in connect 1");
         }
+        return null;
+    }
 
-        formData2.put("target", TARGET_HOME);
-        formData2.put("username", c.getUsername());
-        formData2.put("userInput", c.getUser());
-        formData2.put("passwordInput", "*****");
-        formData2.put("loginForm:submit", loginFormSubmit);
-        formData2.put("password", c.getPwd());
+    //POST
+    public Connection.Response connect2(Card c, Map<String, String> cookies){
+        HashMap<String, String> formData = new HashMap<>();
+        String loginFormSubmit = "Entrar";
 
-        cookies = loginForm.cookies();
+        formData.put("target", TARGET_HOME);
+        formData.put("username", c.getUsername());
+        formData.put("userInput", c.getUser());
+        formData.put("passwordInput", "*****");
+        formData.put("loginForm:submit", loginFormSubmit);
+        formData.put("password", c.getPwd());
 
-        System.out.println(loginForm.statusMessage());
-        //this closes the body?
-        loginForm = null;
-
-        Connection.Response loginForm2 = null;
+        Connection.Response resp = null;
         try {
-            loginForm2 = Jsoup.connect(BASE_URL + LOGIN_PAGE).
+            resp = Jsoup.connect(BASE_URL + LOGIN_PAGE).
                     header("Content-Type", contentType).
                     cookies(cookies).
                     method(Connection.Method.POST).
                     userAgent(USER_AGENT).
-                    data(formData2).
-                    timeout(0).
+                    data(formData).
+                    timeout(30000).
                     ignoreHttpErrors(true).
                     execute();
+            return resp;
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Exception in connect 2");
         }
+        return null;
+    }
 
-        cookies.putAll(loginForm2.cookies());// save the cookies, this will be passed on to next request
+    //GET
+    public Connection.Response connect3(Card c, Map<String, String> cookies){
 
-        System.out.println(loginForm2.statusMessage());
-        //this closes the body?
-        loginForm2 = null;
-
-        Connection.Response loginForm3 = null;
+        Connection.Response resp = null;
         try {
-            loginForm3 = Jsoup.connect(BASE_URL + MANAGEMENT_PAGE).
+            resp = Jsoup.connect(BASE_URL + MANAGEMENT_PAGE).
                     header("Content-Type", contentType).
                     cookies(cookies).
                     userAgent(USER_AGENT).
                     method(Connection.Method.GET).
-                    timeout(0).
+                    timeout(30000).
                     ignoreHttpErrors(true).
                     execute();
+            return resp;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println(loginForm3.statusMessage());
-
-        Document loginDoc = null; // this is the document that contains response html
-        try {
-            String body = loginForm3.body();
-            loginDoc = Jsoup.parse(body);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return loginDoc;
+        return null;
     }
-
-
 }
