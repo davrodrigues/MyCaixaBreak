@@ -20,7 +20,7 @@
         android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:layout_marginStart="5sp"
+        android:layout_marginLeft="4sp"
         android:textSize="17sp"
         android:layout_gravity="center"
  />
@@ -35,11 +35,11 @@
 
     <TextView
         android:id="@+id/t_value"
-        android:layout_width="50sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
+        android:paddingLeft="2sp"
         android:textSize="17sp"
-        android:layout_marginEnd="5sp"
         android:layout_gravity="center"
         />
 

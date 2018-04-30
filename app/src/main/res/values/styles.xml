@@ -22,4 +22,14 @@
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 
+
+    <style name="ClickableImageView">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/background_splash</item>
+    </style>
+
+    <style name="ShopTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@android:color/white</item>
+        <item name="colorAccent">@color/colorSecondary</item>
+    </style>
 </resources>

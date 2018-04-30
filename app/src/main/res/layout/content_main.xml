@@ -17,28 +17,28 @@
         android:clipToPadding="false"
         >
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        />
+        <com.yarolegovich.discretescrollview.DiscreteScrollView
+            android:id="@+id/item_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </android.support.v4.widget.SwipeRefreshLayout>
     <TextView
-    android:id="@+id/saldo_disp"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/backdrop_title"
-    android:text="@string/availableBalance"
-    android:textColor="@color/album_title"
-    android:textSize="@dimen/card_name"
-    android:layout_below="@+id/swiperefresh"
-    android:layout_marginTop="@dimen/album_title"
-    android:layout_marginBottom="@dimen/album_title"
-        />
-    <ExpandableListView
-        android:id="@+id/exp_view"
+        android:id="@+id/saldo_disp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/backdrop_title"
+        android:text="@string/availableBalance"
+        android:textColor="@color/album_title"
+        android:textSize="@dimen/card_name"
+        android:layout_below="@+id/swiperefresh"
+        android:layout_marginTop="@dimen/album_title"
+        android:layout_marginBottom="@dimen/album_title"
+        />
+
+    <ListView
+        android:id="@+id/current_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/saldo_disp"
         />

@@ -5,12 +5,10 @@ package com.diogorodrigues.caixabreak.Adapters;
  */
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.diogorodrigues.caixabreak.Entities.Card;
-import com.diogorodrigues.caixabreak.Entities.Movement;
 import com.diogorodrigues.caixabreak.Entities.Transaction;
 import com.diogorodrigues.caixabreak.R;
 
@@ -54,7 +51,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             LayoutInflater inf = LayoutInflater.from(parent.getContext());
-            convertView = inf.inflate(R.layout.transaction_item, parent, false);
+            convertView = inf.inflate(R.layout.row_item, parent, false);
         }
 
         Transaction tr = (Transaction) getChild(groupPosition, childPosition);

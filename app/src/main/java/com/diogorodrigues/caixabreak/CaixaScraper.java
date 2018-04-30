@@ -82,16 +82,16 @@ public class CaixaScraper {
                     t.setlDataValor(dt2);
 
                     t.setDescription(cols.get(2).text());
-                    if (cols.get(3) != null)
-                        t.setCredit(cols.get(3).text());
-                    else
-                        t.setCredit("");
 
-                    if (cols.get(4) != null)
-                        t.setDebit(cols.get(4).text());
+                    if (cols.get(3) != null)
+                        t.setDebit(cols.get(3).text());
                     else
                         t.setDebit("");
 
+                    if (cols.get(4) != null)
+                        t.setCredit(cols.get(4).text());
+                    else
+                        t.setCredit("");
                     trs.add(t);
                 }
             }
@@ -102,8 +102,9 @@ public class CaixaScraper {
             Elements totalsCols = totalsRow.select("td");
 
             //total credit & total debit
-            mv.setTotalCredit(totalsCols.get(3).text());
-            mv.setTotalDebit(totalsCols.get(4).text());
+
+            mv.setTotalDebit(totalsCols.get(3).text());
+            mv.setTotalCredit(totalsCols.get(4).text());
 
             c.setMovement(mv);
         } else

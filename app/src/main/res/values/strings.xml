@@ -29,4 +29,19 @@
     <string name="h_value">Valor</string>
     <string name="h_description">Descrição</string>
 
+
+    <!-- Refresh -->
+    <string name="refresh_success">Atualizado com sucesso</string>
+
+
+    <!-- OTHERS -->
+
+    <string name="pref_key_transition_time" translatable="false">pref_key_transition_time</string>
+    <string name="btn_smooth_scroll">Smooth scroll</string>
+    <string name="btn_transition_time">Transition time</string>
+
+    <string name="dialog_seekbar_transition_time">Item transition time in millis</string>
+
+    <string name="msg_no_browser">No app found to open the url</string>
+    <string name="msg_unsupported_op">Unsupported operation</string>
 </resources>
